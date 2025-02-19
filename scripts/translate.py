@@ -30,13 +30,13 @@ model = fasttext.load_model(MODEL_PATH)
 
 def print_usage():
     """Displays the script usage."""
-    print("Usage: python translate.py <directory> <dest_lang>")
+    print("Usage: python scripts/translate.py <directory> <dest_lang>")
     print("Options:")
     print("  <directory>   : Path to the directory containing NFO or XML files")
     print("  <dest_lang>   : Target language code (default: 'en')")
     print("Examples:")
-    print("  python translate.py /media/Movies fr")
-    print("  python translate.py /media/Movies en")
+    print("  python scripts/translate.py /media/Movies fr")
+    print("  python scripts/translate.py /media/Movies en")
 
 def translate_text(text, dest="en"):
     """Translates the text using deep-translator."""
