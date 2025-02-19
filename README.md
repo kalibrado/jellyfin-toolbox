@@ -26,7 +26,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-To recursively translate all `.nfo` and `.xml` files in a directory and detect the language before translating:
+To recursively scripts/translate all `.nfo` and `.xml` files in a directory and detect the language before translating:
 
 ```bash
 python translate.py /path/to/media_folder fr
