@@ -2,13 +2,29 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 import fasttext
+import requests
 from deep_translator import GoogleTranslator
 
-# Charger le modèle fastText une seule fois au démarrage
-MODEL_PATH = "./bin/lid.176.bin"
+MODEL_PATH = "/tmp/lid.176.bin"
+MODEL_URL = "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
+
+def download_model():
+    """Télécharge le modèle fastText si absent."""
+    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+    print(f"Downloading model from {MODEL_URL}...")
+    
+    response = requests.get(MODEL_URL, stream=True)
+    if response.status_code == 200:
+        with open(MODEL_PATH, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        print("Download complete!")
+    else:
+        print(f"Failed to download model. HTTP Status: {response.status_code}")
+        sys.exit(1)
+
 if not os.path.exists(MODEL_PATH):
-    print(f"Error: Language detection model not found at {MODEL_PATH}")
-    sys.exit(1)
+    download_model()
 
 model = fasttext.load_model(MODEL_PATH)
 
@@ -22,7 +38,6 @@ def print_usage():
     print("  python translate.py /media/Movies fr")
     print("  python translate.py /media/Movies en")
 
-
 def translate_text(text, dest="en"):
     """Translates the text using deep-translator."""
     try:
@@ -32,7 +47,6 @@ def translate_text(text, dest="en"):
         print(f"Error translating text: '{text}'\nError: {e}")
         return text  # Return original text in case of error
 
-
 def detect_language(text):
     """Detects the language using fastText."""
     text = text.replace("\n", " ")  # Nettoyer le texte pour éviter les erreurs
@@ -40,7 +54,6 @@ def detect_language(text):
     detected_lang = prediction[0][0].replace("__label__", "")
     print(f"Detected language for '{text[:50]}...': {detected_lang}")  # Affichage partiel pour lisibilité
     return detected_lang
-
 
 def clean_nfo_file(filepath):
     """Cleans the file to keep only valid XML content."""
@@ -56,7 +69,6 @@ def clean_nfo_file(filepath):
     # Write the cleaned content back to the file
     with open(filepath, "w", encoding="utf-8") as file:
         file.writelines(cleaned_lines)
-
 
 def translate_file(filepath, dest_lang="fr"):
     """Translates the content of an NFO file after cleaning it."""
@@ -89,7 +101,6 @@ def translate_file(filepath, dest_lang="fr"):
     except ET.ParseError as e:
         print(f"Error parsing file {filepath}: {e}")
 
-
 def translate_files_in_directory(directory, dest_lang="en"):
     """Translates all NFO or XML files in the specified directory."""
     for root, _, files in os.walk(directory):
@@ -102,7 +113,6 @@ def translate_files_in_directory(directory, dest_lang="en"):
                     translate_file(filepath, dest_lang=dest_lang)
                 except ValueError as e:
                     print(e)
-
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
