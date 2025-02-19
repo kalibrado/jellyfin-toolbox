@@ -55,10 +55,10 @@ def get_remaining_quota():
             wait_minutes = (wait_time % 3600) // 60
 
             print(f"Quota exhausted! Waiting {wait_hours}h {wait_minutes}m...")
-            time.sleep(wait_time)
+            sys.exit(0)
     except Exception as e:
         print(f"Failed to retrieve quota info: {e}")
-        time.sleep(60 * 60 * 12)  # Default pause of 12h
+        sys.exit(1)
 
 def download_sub(filepath, filename, dest_lang="en"):
     """Downloads a subtitle for a video file."""
