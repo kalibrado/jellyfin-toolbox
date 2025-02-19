@@ -49,10 +49,10 @@ def translate_text(text, dest="en"):
 
 def detect_language(text):
     """Detects the language using fastText."""
-    text = text.replace("\n", " ")  # Nettoyer le texte pour éviter les erreurs
+    text = text.replace("\n", " ") 
     prediction = model.predict(text, k=1)
     detected_lang = prediction[0][0].replace("__label__", "")
-    print(f"Detected language for '{text[:50]}...': {detected_lang}")  # Affichage partiel pour lisibilité
+    print(f"Detected language for '{text[:50]}...': {detected_lang}")
     return detected_lang
 
 def clean_nfo_file(filepath):
@@ -94,7 +94,7 @@ def translate_file(filepath, dest_lang="fr"):
                 
                 translated_text = translate_text(original_text, dest=dest_lang)
                 elem.text = translated_text
-                print(f"Translated: '{original_text}'\nTo: '{translated_text}'")
+                print(f"Translated: '{original_text[:50]}...'\nTo: '{translated_text[:50]}...'")
 
         # Save the translated XML back to the original file with UTF-8 encoding
         tree.write(filepath, encoding="utf-8", xml_declaration=True)
